@@ -44,11 +44,13 @@ namespace Semestral
         {
             List<float> forecast = TestData.Select(s => s.zatizeniCerpani).ToList();
             var error = errors(actual, forecast);
+            var per = MeanAbsolutePercentageError(actual, forecast);
             Console.WriteLine("Evaluation Metrics");
             Console.WriteLine("---------------------\n");
             Console.WriteLine($"Mean Absolute Error: {MeanAbsoluteError(error):F3}");
             Console.WriteLine($"Root Mean Squared Error: {RootMeanSquare(error):F3}");
-            Console.WriteLine($"Mean absolute percentage error: {MeanAbsolutePercentageError(actual,forecast):F3}\n");
+            Console.WriteLine($"Mean absolute percentage error: {per:F3}");
+            Console.WriteLine($"Mean accuracy: {100-per:F3}\n");
 
         }
 

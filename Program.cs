@@ -1,6 +1,9 @@
 ﻿using Microsoft.ML;
+using Microsoft.ML.Data;
 using Microsoft.ML.Transforms.TimeSeries;
 using Semestral;
+using System.Data;
+using System.Numerics;
 
 List<Value> getData(string filePath)
 {
@@ -30,10 +33,13 @@ List<Value> testData = getData(testPath);
 var pipeline = context.Forecasting.ForecastBySsa(
     "Forecast",
     nameof(Value.zatizeniCerpani),
-    windowSize: 24*3,
-    seriesLength: 24*7,
+    windowSize: 24*7,
+    seriesLength: 24*30,
     trainSize: trainData.Count,
-    horizon: testData.Count
+    horizon: testData.Count,
+    confidenceLevel: 0.95f,
+    confidenceLowerBoundColumn: "LowerBoundRentals",
+    confidenceUpperBoundColumn: "UpperBoundRentals"
     );
 var model = pipeline.Fit(data);
 var forecastingEngine=model.CreateTimeSeriesEngine<Value,ValueForcast>(context);
@@ -41,12 +47,35 @@ var forecast = forecastingEngine.Predict();
 
 Utilities.evaluate(testData, forecast.Forecast.ToList());
 
+var trainigPipeLine = context.Transforms.DetectSpikeBySsa(
+                "Prediction",
+                "zatizeniCerpani",
+                confidence: 98.0,
+                pvalueHistoryLength: 30,
+                trainingWindowSize: 90,
+                seasonalityWindowSize: 30);
+
+ITransformer trainedModel = trainigPipeLine.Fit(data);
+var transformedData = trainedModel.Transform(data);
+int index = 0;
+foreach (var i in context.Data.CreateEnumerable<ValuePrediction>(transformedData, reuseRowObject: false))
+{
+    if (i.Prediction[0] == 1)
+    {
+        Console.WriteLine($"Anomaly detected at {trainData[index].date}");
+    }
+    ++index;
+}
 
 internal class ValueForcast
 {
     public float[] Forecast {  get; set; }
 }
 
+internal class ValuePrediction
+{
+    public double[] Prediction { get; set; }
+}
 internal class Value
 {
     public DateTime date { get; set; }
