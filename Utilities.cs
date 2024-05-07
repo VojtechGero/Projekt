@@ -40,12 +40,12 @@ namespace Semestral
             return sum/ int.Min(actualData.Count, forecastData.Count);
         }
 
-        internal static void evaluate(List<Value> TestData, List<float> actual)
+        internal static void evaluate(List<Value> TestData, List<float> actual,string method)
         {
             List<float> forecast = TestData.Select(s => s.zatizeniCerpani).ToList();
             var error = errors(actual, forecast);
             var per = MeanAbsolutePercentageError(actual, forecast);
-            Console.WriteLine("Evaluation Metrics");
+            Console.WriteLine($"\n{method}");
             Console.WriteLine("---------------------\n");
             Console.WriteLine($"Mean Absolute Error: {MeanAbsoluteError(error):F3}");
             Console.WriteLine($"Root Mean Squared Error: {RootMeanSquare(error):F3}");
