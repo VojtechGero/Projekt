@@ -27,8 +27,12 @@ string testPath = "..\\..\\..\\data\\test.txt";
 
 List<Value> trainData = getData(trainPath);
 List<Value> testData = getData(testPath);
-
-Utilities.evaluate(testData, FastTree.predict(trainData, testData.Count).Select(x=>x.zatizeniCerpani).ToList(), "FastTree");
+var reg = new Regression();
+Utilities.evaluate(testData, reg.FastTree(trainData, testData.Count), "FastTree");
+Utilities.evaluate(testData, reg.LbfgsPoisson(trainData, testData.Count), "LbfgsPoisson");
+Utilities.evaluate(testData, reg.FastForest(trainData, testData.Count), "FastForest");
+Utilities.evaluate(testData, reg.Sdca(trainData, testData.Count), "Sdca");
+Utilities.evaluate(testData, reg.Gam(trainData, testData.Count), "Gam");
 Utilities.evaluate(testData, ForecastSsa.forecast(trainData, testData.Count), "ForecastBySsa");
 
 SrCnn.detetectError(trainData);

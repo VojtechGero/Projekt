@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.ML.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,9 @@ public class SingleValueForecast
     public float Hour { get; set; }
     public float zatizeniCerpani { get; set; }
     public DateTime date { get; set; }
+
+    [ColumnName("Score")]
+    public float PredictedZatizeniCerpani { get; set; }
 
     public SingleValueForecast(DateTime date, float zatizeniCerpani)
     {
