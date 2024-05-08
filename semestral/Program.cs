@@ -1,9 +1,4 @@
-﻿using Microsoft.ML;
-using Microsoft.ML.TimeSeries;
-using Microsoft.ML.Transforms.TimeSeries;
-using Semestral;
-using System.Data;
-using Tensorflow.Contexts;
+﻿using Semestral;
 
 List<Value> getData(string filePath)
 {
